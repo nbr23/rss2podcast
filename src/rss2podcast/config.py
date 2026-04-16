@@ -114,7 +114,10 @@ def _build_parser() -> argparse.ArgumentParser:
 def parse_args(argv: list[str] | None = None) -> AppConfig:
     args = _build_parser().parse_args(argv)
     if args.config:
-        return _from_yaml(args.config)
+        app = _from_yaml(args.config)
+        if args.limit is not None:
+            app.limit = args.limit
+        return app
     missing = [n for n in ("feed_url", "feed_name", "output_dir", "url_root") if not getattr(args, n)]
     if missing:
         raise SystemExit(f"missing required args: {', '.join('--' + m.replace('_', '-') for m in missing)}")

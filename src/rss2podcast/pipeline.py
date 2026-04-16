@@ -88,6 +88,15 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
         new_count += 1
 
     log.info("[%s] processed %d new entries", feed_cfg.name, new_count)
+
+    if limit is not None:
+        current_guids = {e.guid for e in entries}
+        stale = [g for g in state.entries if g not in current_guids]
+        if stale:
+            for g in stale:
+                del state.entries[g]
+            state.save()
+
     out = write_feed(feed_cfg, state, feed_dir, app.url_root, slug)
     log.info("[%s] wrote feed: %s", feed_cfg.name, out)
 
