@@ -1,0 +1,41 @@
+[tool.uv]
+environments = ["python_version >= '3.12'"]
+
+[build-system]
+requires = ["uv_build>=0.9.6,<0.10.0"]
+build-backend = "uv_build"
+
+[project]
+name = "rss2podcast"
+version = "0.1.0"
+description = "Turn an RSS feed into a podcast by synthesizing entries with Piper TTS"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+    { name = "nbr23", email = "max@23.tf" }
+]
+dependencies = [
+    "feedparser>=6.0",
+    "feedgen>=1.0",
+    "trafilatura>=1.12",
+    "requests>=2.31",
+    "mutagen>=1.47",
+    "PyYAML>=6.0",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+]
+
+[project.urls]
+homepage = "https://github.com/nbr23/rss2podcast"
+repository = "https://github.com/nbr23/rss2podcast"
+
+
+[dependency-groups]
+test = ["pytest>=8.0","pytest-httpserver>=1.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[project.scripts]
+rss2podcast = "rss2podcast.__main__:main"
