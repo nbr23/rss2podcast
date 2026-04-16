@@ -32,7 +32,10 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
     state = State.load(feed_dir / "state.json", feed_cfg.url)
 
     log.info("[%s] fetching %s", feed_cfg.name, feed_cfg.url)
-    entries = fetch(feed_cfg.url)
+    entries, feed_image = fetch(feed_cfg.url)
+    if feed_image and not state.feed_image_url:
+        state.feed_image_url = feed_image
+        state.save()
     entries.sort(key=lambda e: e.pub_date, reverse=True)
     limit = feed_cfg.limit if feed_cfg.limit is not None else app.limit
     if limit is not None:
@@ -82,6 +85,8 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
             "processed_at": datetime.now(timezone.utc).isoformat(),
             "text_source": body.source,
         }
+        if entry.image_url:
+            record["image_url"] = entry.image_url
         if app.save_text:
             record["raw_text"] = body.raw
             record["tts_text"] = text

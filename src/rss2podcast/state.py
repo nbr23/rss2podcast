@@ -13,12 +13,18 @@ class State:
     feed_url: str
     path: Path
     entries: dict[str, dict[str, Any]] = field(default_factory=dict)
+    feed_image_url: str | None = None
 
     @classmethod
     def load(cls, path: Path, feed_url: str) -> "State":
         if path.is_file():
             data = json.loads(path.read_text())
-            return cls(feed_url=data.get("feed_url", feed_url), path=path, entries=data.get("entries", {}))
+            return cls(
+                feed_url=data.get("feed_url", feed_url),
+                path=path,
+                entries=data.get("entries", {}),
+                feed_image_url=data.get("feed_image_url"),
+            )
         return cls(feed_url=feed_url, path=path)
 
     def has(self, guid: str) -> bool:
@@ -33,7 +39,10 @@ class State:
         fd, tmp = tempfile.mkstemp(dir=self.path.parent, prefix=".state-", suffix=".tmp")
         try:
             with os.fdopen(fd, "w") as f:
-                json.dump({"feed_url": self.feed_url, "entries": self.entries}, f, indent=2, sort_keys=True)
+                payload: dict[str, Any] = {"feed_url": self.feed_url, "entries": self.entries}
+                if self.feed_image_url:
+                    payload["feed_image_url"] = self.feed_image_url
+                json.dump(payload, f, indent=2, sort_keys=True)
             os.replace(tmp, self.path)
         except Exception:
             if os.path.exists(tmp):

@@ -16,6 +16,7 @@ class FeedEntry:
     pub_date: datetime
     summary_html: str | None
     content_html: str | None
+    image_url: str | None = None
 
 
 def _to_datetime(t: struct_time | None) -> datetime:
@@ -36,7 +37,29 @@ def _content_html(entry: dict) -> str | None:
     return None
 
 
-def fetch(url: str) -> list[FeedEntry]:
+def _entry_image_url(entry: dict) -> str | None:
+    for m in entry.get("media_thumbnail", []):
+        if url := m.get("url"):
+            return url
+    for m in entry.get("media_content", []):
+        if m.get("type", "").startswith("image/") or m.get("medium") == "image":
+            if url := m.get("url"):
+                return url
+    for enc in entry.get("enclosures", []):
+        if enc.get("type", "").startswith("image/"):
+            if url := enc.get("href") or enc.get("url"):
+                return url
+    return None
+
+
+def _feed_image_url(feed: dict) -> str | None:
+    img = feed.get("image")
+    if img:
+        return img.get("href") or None
+    return None
+
+
+def fetch(url: str) -> tuple[list[FeedEntry], str | None]:
     parsed = feedparser.parse(url)
     out: list[FeedEntry] = []
     for e in parsed.entries:
@@ -48,6 +71,7 @@ def fetch(url: str) -> list[FeedEntry]:
                 pub_date=_to_datetime(e.get("published_parsed") or e.get("updated_parsed")),
                 summary_html=e.get("summary"),
                 content_html=_content_html(e),
+                image_url=_entry_image_url(e),
             )
         )
-    return out
+    return out, _feed_image_url(parsed.feed)

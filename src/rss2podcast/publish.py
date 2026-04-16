@@ -39,9 +39,10 @@ def write_feed(
     if feed_cfg.author:
         fg.author({"name": feed_cfg.author})
         fg.podcast.itunes_author(feed_cfg.author)
-    if feed_cfg.image_url:
-        fg.image(feed_cfg.image_url)
-        fg.podcast.itunes_image(feed_cfg.image_url)
+    channel_image = feed_cfg.image_url or state.feed_image_url
+    if channel_image:
+        fg.image(channel_image)
+        fg.podcast.itunes_image(channel_image)
     fg.podcast.itunes_category("Technology")
     fg.podcast.itunes_explicit("no")
 
@@ -69,6 +70,8 @@ def write_feed(
         fe.enclosure(mp3_url, str(rec.get("filesize", 0)), "audio/mpeg")
         if rec.get("duration_seconds"):
             fe.podcast.itunes_duration(_format_duration(rec["duration_seconds"]))
+        if rec.get("image_url"):
+            fe.podcast.itunes_image(rec["image_url"])
 
     out = feed_dir / "feed.xml"
     xml_bytes = fg.rss_str(pretty=True)

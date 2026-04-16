@@ -70,12 +70,18 @@ body {
 
 .item {
     display: flex;
-    flex-direction: column;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.2s;
+}
+
+.thumbnail {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-right: 1px solid #ddd;
 }
 
 .item:hover {
@@ -140,6 +146,13 @@ body {
           <div class="item-list">
             <xsl:for-each select="/rss/channel/item">
             <div class="item">
+              <xsl:if test="itunes:image/@href">
+                <img class="thumbnail">
+                  <xsl:attribute name="src">
+                    <xsl:value-of select="itunes:image/@href"/>
+                  </xsl:attribute>
+                </img>
+              </xsl:if>
               <a class="details" target="_blank" rel="noopener noreferrer">
                 <xsl:attribute name="href">
                   <xsl:value-of select="link"/>

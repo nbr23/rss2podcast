@@ -11,6 +11,7 @@ Turn an RSS feed into a listenable podcast. Fetches each entry, extracts the art
    - POST to gopipertts `/api/tts`, save the MP3 to disk.
    - Append the entry to `state.json` immediately (crash-safe).
 3. Rewrite `feed.xml` from the full state with `feedgen` (iTunes namespace).
+4. Write `style.xsl` to the output root so browsers render feeds as a readable HTML page.
 
 ## Install
 
@@ -55,6 +56,7 @@ See `config.sample.yaml` for a fully annotated example.
 
 ```
 {output_dir}/
+  style.xsl
   {feed-slug}/
     state.json
     feed.xml
@@ -62,7 +64,7 @@ See `config.sample.yaml` for a fully annotated example.
     ...
 ```
 
-Serve `{output_dir}` over HTTP at `{url_root}` and subscribe to `{url_root}/{feed-slug}/feed.xml` in a podcast app.
+Serve `{output_dir}` over HTTP at `{url_root}` and subscribe to `{url_root}/{feed-slug}/feed.xml` in a podcast app. When `style_rss_feed` is enabled (the default), opening `feed.xml` directly in a browser renders it as a human-readable HTML page with an inline audio player.
 
 ## Scheduling
 
@@ -102,6 +104,7 @@ Designed to run as a cron / scheduled job. Re-runs are idempotent — entries al
 | `--limit N` | — | Keep only the N newest articles per feed; entries that roll out of the window are evicted from state and removed from the podcast feed |
 | `--save-text` | off | Persist raw/clean text in `state.json` (useful for debugging) |
 | `--no-fetch` | off | Skip external crawling; use only RSS `content`/`description` |
+| `--no-style-rss-feed` | style on | Disable XSLT styling; skip `style.xsl` and omit the processing instruction from `feed.xml` |
 
 ### Extraction tuning
 
@@ -138,6 +141,7 @@ tts_endpoint: http://gopipertts:8080 # default: http://localhost:8080
 limit: 5                             # optional: process only N newest per feed
 save_text: false                     # optional: persist text in state.json
 no_fetch: false                      # optional: skip external crawling globally
+style_rss_feed: true                 # default: true; set to false to disable XSLT browser rendering
 ```
 
 Per-feed keys:
