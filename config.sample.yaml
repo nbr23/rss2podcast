@@ -17,6 +17,7 @@ feeds:
     author: Ars Technica
     prune_xpath:
       - "//div[contains(@class,'author-bio')]"
+    limit: 5
 
   - name: Hackaday
     url: https://hackaday.com/blog/feed/
