@@ -1,0 +1,29 @@
+output_dir: podcasts
+url_root: https://podcasts.example.com
+tts_endpoint: http://localhost:8080
+
+feeds:
+  - name: EFF Updates
+    url: https://www.eff.org/rss/updates.xml
+    voice: en_US-amy-medium
+    description: EFF updates, narrated by Piper TTS
+    author: EFF
+    limit: 5
+
+  - name: Ars Technica
+    url: https://feeds.arstechnica.com/arstechnica/index
+    voice: en_US-amy-medium
+    description: Ars Technica articles, narrated by Piper TTS
+    author: Ars Technica
+    prune_xpath:
+      - "//div[contains(@class,'author-bio')]"
+
+  - name: Hackaday
+    url: https://hackaday.com/blog/feed/
+    voice: en_US-amy-low
+    description: Hackaday articles, narrated by Piper TTS
+    author: Hackaday
+    # Remove author bio and tag/category sidebars before extraction
+    prune_xpath:
+      - "//div[contains(@class,'author-bio')]"
+      - "//section[contains(@class,'related')]"
