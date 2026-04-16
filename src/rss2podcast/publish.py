@@ -22,6 +22,7 @@ def write_feed(
     feed_dir: Path,
     url_root: str,
     feed_slug: str,
+    style: bool = False,
 ) -> Path:
     fg = FeedGenerator()
     fg.load_extension("podcast")
@@ -70,5 +71,10 @@ def write_feed(
             fe.podcast.itunes_duration(_format_duration(rec["duration_seconds"]))
 
     out = feed_dir / "feed.xml"
-    fg.rss_file(str(out), pretty=True)
+    xml_bytes = fg.rss_str(pretty=True)
+    if style:
+        pi = b'<?xml-stylesheet type="text/xsl" href="../style.xsl"?>\n'
+        nl = xml_bytes.index(b'\n')
+        xml_bytes = xml_bytes[:nl + 1] + pi + xml_bytes[nl + 1:]
+    out.write_bytes(xml_bytes)
     return out

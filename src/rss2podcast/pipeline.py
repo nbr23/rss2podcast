@@ -7,10 +7,11 @@ from pathlib import Path
 from mutagen.mp3 import MP3
 
 from .config import AppConfig, FeedConfig, slugify
-from .extract import compose_speech
+from .extract import compose_speech, html_to_text
 from .feed import fetch
 from .publish import write_feed
 from .state import State
+from .templates.style import FEED_STYLE_TMPL
 from .tts import TTSClient
 
 log = logging.getLogger(__name__)
@@ -74,7 +75,7 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
             "title": entry.title,
             "link": entry.link,
             "pub_date": entry.pub_date.isoformat(),
-            "description": entry.summary_html or "",
+            "description": html_to_text(entry.summary_html) if entry.summary_html else "",
             "mp3_filename": mp3_filename,
             "filesize": mp3_path.stat().st_size,
             "duration_seconds": _mp3_duration(mp3_path),
@@ -97,12 +98,14 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
                 del state.entries[g]
             state.save()
 
-    out = write_feed(feed_cfg, state, feed_dir, app.url_root, slug)
+    out = write_feed(feed_cfg, state, feed_dir, app.url_root, slug, style=app.style_rss_feed)
     log.info("[%s] wrote feed: %s", feed_cfg.name, out)
 
 
 def run(app: AppConfig) -> None:
     app.output_dir.mkdir(parents=True, exist_ok=True)
+    if app.style_rss_feed:
+        (app.output_dir / "style.xsl").write_text(FEED_STYLE_TMPL)
     for feed_cfg in app.feeds:
         try:
             process_feed(app, feed_cfg)
