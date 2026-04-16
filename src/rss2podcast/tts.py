@@ -28,7 +28,7 @@ class TTSClient:
             with requests.post(
                 f"{self.endpoint}/api/tts",
                 json=payload,
-                stream=True,
+                stream=False,
                 timeout=self.timeout,
             ) as r:
                 r.raise_for_status()
