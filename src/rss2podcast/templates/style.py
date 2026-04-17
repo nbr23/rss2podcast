@@ -91,6 +91,10 @@ body {
 .details {
     padding: 20px;
     flex: 1;
+    color: inherit;
+}
+
+.title-link {
     text-decoration: none;
     color: inherit;
 }
@@ -111,11 +115,11 @@ body {
 .player {
     display: flex;
     justify-content: center;
-    padding: 0 20px 20px;
+    margin: 10px 0;
 }
 
 .player audio {
-    width: 90%;
+    width: 100%;
     height: auto;
 }
         </style>
@@ -153,27 +157,29 @@ body {
                   </xsl:attribute>
                 </img>
               </xsl:if>
-              <a class="details" target="_blank" rel="noopener noreferrer">
-                <xsl:attribute name="href">
-                  <xsl:value-of select="link"/>
-                </xsl:attribute>
-                <h3 class="title"><xsl:value-of select="title"/></h3>
+              <div class="details">
+                <a class="title-link" target="_blank" rel="noopener noreferrer">
+                  <xsl:attribute name="href">
+                    <xsl:value-of select="link"/>
+                  </xsl:attribute>
+                  <h3 class="title"><xsl:value-of select="title"/></h3>
+                </a>
+                <p class="player">
+                  <audio controls="controls" preload="metadata">
+                    <source>
+                      <xsl:attribute name="src">
+                        <xsl:value-of select="enclosure/@url"/>
+                      </xsl:attribute>
+                      <xsl:attribute name="type">
+                        <xsl:value-of select="enclosure/@type"/>
+                      </xsl:attribute>
+                    </source>
+                  </audio>
+                </p>
                 <div class="description">
                   <xsl:value-of select="description"/>
                 </div>
-              </a>
-              <p class="player">
-                <audio controls="controls" preload="metadata">
-                  <source>
-                    <xsl:attribute name="src">
-                      <xsl:value-of select="enclosure/@url"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="type">
-                      <xsl:value-of select="enclosure/@type"/>
-                    </xsl:attribute>
-                  </source>
-                </audio>
-              </p>
+              </div>
             </div>
             </xsl:for-each>
           </div>
