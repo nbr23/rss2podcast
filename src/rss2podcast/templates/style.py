@@ -12,6 +12,7 @@ FEED_STYLE_TMPL = """<?xml version="1.0"?>
         </title>
         <style>
 .podcast-banner {
+    display: block;
     background-color: #ffc107;
     color: #000;
     text-align: center;
@@ -23,6 +24,11 @@ FEED_STYLE_TMPL = """<?xml version="1.0"?>
     font-family: monospace, monospace;
     font-weight: bold;
     font-size: 0.8em;
+    text-decoration: none;
+}
+
+.podcast-banner:hover {
+    background-color: #e0a800;
 }
 
 body {
@@ -125,9 +131,9 @@ body {
         </style>
       </head>
       <body>
-        <div class="podcast-banner">
-            This page is a Podcast Feed, add it to your podcast player!
-        </div>
+        <a class="podcast-banner" href="#" onclick="this.href='pcast://'+location.host+location.pathname+location.search;">
+            This page is a Podcast Feed, click to add it to your podcast player!
+        </a>
         <div class="content">
           <div class="podcast-header">
             <xsl:if test="/rss/channel/itunes:image/@href">
