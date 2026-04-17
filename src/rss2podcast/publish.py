@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
@@ -9,11 +10,25 @@ from feedgen.feed import FeedGenerator
 from .config import FeedConfig
 from .state import State
 
+log = logging.getLogger(__name__)
+
 
 def _format_duration(seconds: int) -> str:
     h, rem = divmod(int(seconds), 3600)
     m, s = divmod(rem, 60)
     return f"{h:d}:{m:02d}:{s:02d}"
+
+
+def _set_itunes_image(podcast_ext, url: str, context: str) -> None:
+    lower = url.split("?", 1)[0].lower()
+    if lower.endswith((".jpg", ".png")):
+        podcast_ext.itunes_image(url)
+        return
+    if lower.endswith(".jpeg"):
+        mangled = f"_{type(podcast_ext).__name__}__itunes_image"
+        setattr(podcast_ext, mangled, url)
+        return
+    log.warning("skipping itunes_image for %s: unsupported extension (url=%s)", context, url)
 
 
 def write_feed(
@@ -42,7 +57,7 @@ def write_feed(
     channel_image = feed_cfg.image_url or state.feed_image_url
     if channel_image:
         fg.image(channel_image)
-        fg.podcast.itunes_image(channel_image)
+        _set_itunes_image(fg.podcast, channel_image, "channel")
     fg.podcast.itunes_category("Technology")
     fg.podcast.itunes_explicit("no")
 
@@ -71,7 +86,7 @@ def write_feed(
         if rec.get("duration_seconds"):
             fe.podcast.itunes_duration(_format_duration(rec["duration_seconds"]))
         if rec.get("image_url"):
-            fe.podcast.itunes_image(rec["image_url"])
+            _set_itunes_image(fe.podcast, rec["image_url"], guid)
 
     out = feed_dir / "feed.xml"
     xml_bytes = fg.rss_str(pretty=True)
