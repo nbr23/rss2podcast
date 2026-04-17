@@ -36,6 +36,7 @@ class TTSClient:
                     for chunk in r.iter_content(chunk_size=8192):
                         if chunk:
                             f.write(chunk)
+            os.chmod(tmp_path, 0o644)
             os.replace(tmp_path, dest)
         except Exception:
             if tmp_path.exists():

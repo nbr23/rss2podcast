@@ -43,6 +43,7 @@ class State:
                 if self.feed_image_url:
                     payload["feed_image_url"] = self.feed_image_url
                 json.dump(payload, f, indent=2, sort_keys=True)
+            os.chmod(tmp, 0o644)
             os.replace(tmp, self.path)
         except Exception:
             if os.path.exists(tmp):
