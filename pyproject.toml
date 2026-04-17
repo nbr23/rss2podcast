@@ -7,7 +7,7 @@ build-backend = "uv_build"
 
 [project]
 name = "rss2podcast"
-version = "0.4.0"
+version = "0.5.0"
 description = "Turn an RSS feed into a podcast by synthesizing entries with Piper TTS"
 readme = "README.md"
 requires-python = ">=3.12"
