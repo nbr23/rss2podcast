@@ -46,11 +46,11 @@ def write_feed(
     fg.podcast.itunes_category("Technology")
     fg.podcast.itunes_explicit("no")
 
-    items = sorted(
-        state.entries.items(),
-        key=lambda kv: kv[1].get("pub_date", ""),
-        reverse=True,
-    )
+    in_feed = [kv for kv in state.entries.items() if kv[1].get("feed_index") is not None]
+    in_feed.sort(key=lambda kv: kv[1]["feed_index"])
+    stale = [kv for kv in state.entries.items() if kv[1].get("feed_index") is None]
+    stale.sort(key=lambda kv: kv[1].get("pub_date", ""), reverse=True)
+    items = in_feed + stale
 
     for guid, rec in items:
         fe = fg.add_entry()

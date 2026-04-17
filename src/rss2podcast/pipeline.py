@@ -36,16 +36,23 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
     if feed_image and not state.feed_image_url:
         state.feed_image_url = feed_image
         state.save()
-    entries.sort(key=lambda e: e.pub_date, reverse=True)
     limit = feed_cfg.limit if feed_cfg.limit is not None else app.limit
     if limit is not None:
         entries = entries[:limit]
+
+    state_dirty = False
+    for idx, entry in enumerate(entries):
+        if entry.guid in state.entries and state.entries[entry.guid].get("feed_index") != idx:
+            state.entries[entry.guid]["feed_index"] = idx
+            state_dirty = True
+    if state_dirty:
+        state.save()
     log.info("[%s] %d entries in feed, %d already in state", feed_cfg.name, len(entries), len(state.entries))
 
     tts = TTSClient(app.tts_endpoint, feed_cfg.voice)
 
     new_count = 0
-    for entry in entries:
+    for idx, entry in enumerate(entries):
         if state.has(entry.guid):
             continue
         log.info("[%s] processing: %s", feed_cfg.name, entry.title)
@@ -84,6 +91,7 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
             "duration_seconds": _mp3_duration(mp3_path),
             "processed_at": datetime.now(timezone.utc).isoformat(),
             "text_source": body.source,
+            "feed_index": idx,
         }
         if entry.image_url:
             record["image_url"] = entry.image_url
