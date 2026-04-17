@@ -42,7 +42,7 @@ def write_feed(
     fg = FeedGenerator()
     fg.load_extension("podcast")
 
-    channel_link = f"{url_root}/{quote(feed_slug)}/feed.xml"
+    channel_link = f"{url_root}/{quote(feed_slug)}.xml"
     fg.id(channel_link)
     fg.title(feed_cfg.name)
     fg.link(href=channel_link, rel="self")
@@ -88,10 +88,10 @@ def write_feed(
         if rec.get("image_url"):
             _set_itunes_image(fe.podcast, rec["image_url"], guid)
 
-    out = feed_dir / "feed.xml"
+    out = feed_dir.parent / f"{feed_dir.name}.xml"
     xml_bytes = fg.rss_str(pretty=True)
     if style:
-        pi = b'<?xml-stylesheet type="text/xsl" href="../style.xsl"?>\n'
+        pi = b'<?xml-stylesheet type="text/xsl" href="style.xsl"?>\n'
         nl = xml_bytes.index(b'\n')
         xml_bytes = xml_bytes[:nl + 1] + pi + xml_bytes[nl + 1:]
     out.write_bytes(xml_bytes)

@@ -21,6 +21,7 @@ def test_writes_valid_rss(tmp_path):
 
     cfg = FeedConfig(name="MyFeed", url="https://src.example/rss", description="Test", author="Tester")
     out = write_feed(cfg, state, feed_dir, "https://podcasts.example.com", "myfeed")
+    assert out == tmp_path / "myfeed.xml"
     xml = out.read_text()
     assert "<title>MyFeed</title>" in xml
     assert "Episode One" in xml
