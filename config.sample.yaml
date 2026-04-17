@@ -17,6 +17,8 @@ feeds:
     author: Ars Technica
     prune_xpath:
       - "//div[contains(@class,'author-bio')]"
+    merge_xpath:
+      - "//div[contains(@class,'post-content')]"
     limit: 5
 
   - name: Hackaday

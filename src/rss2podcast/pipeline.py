@@ -66,6 +66,7 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
             deduplicate=feed_cfg.deduplicate,
             fast_extraction=feed_cfg.fast_extraction,
             prune_xpath=feed_cfg.prune_xpath,
+            merge_xpath=feed_cfg.merge_xpath,
         )
         if not text.strip():
             log.warning("[%s] empty text for %s, skipping", feed_cfg.name, entry.guid)

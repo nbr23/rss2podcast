@@ -6,6 +6,7 @@ from dataclasses import dataclass
 
 import trafilatura
 from bs4 import BeautifulSoup
+from lxml import etree, html as lxml_html
 
 from .feed import FeedEntry
 
@@ -39,6 +40,42 @@ def html_to_text(html: str) -> str:
     return text.strip()
 
 
+def _merge_split_containers(html_text: str, xpaths: list[str]) -> str:
+    try:
+        root = lxml_html.fromstring(html_text)
+    except (etree.ParserError, ValueError) as e:
+        log.warning("merge_xpath: could not parse HTML (%s), skipping merge", e)
+        return html_text
+    merged_any = False
+    for xp in xpaths:
+        try:
+            matches = root.xpath(xp)
+        except etree.XPathEvalError as e:
+            log.warning("merge_xpath: invalid xpath %r (%s), skipping", xp, e)
+            continue
+        matches = [m for m in matches if isinstance(m, etree._Element)]
+        if len(matches) < 2:
+            continue
+        target = matches[0]
+        for extra in matches[1:]:
+            if extra.text:
+                if len(target) > 0:
+                    tail = target[-1]
+                    tail.tail = (tail.tail or "") + extra.text
+                else:
+                    target.text = (target.text or "") + extra.text
+            for child in list(extra):
+                target.append(child)
+            parent = extra.getparent()
+            if parent is not None:
+                parent.remove(extra)
+        log.info("merge_xpath: merged %d containers for %r", len(matches), xp)
+        merged_any = True
+    if not merged_any:
+        return html_text
+    return lxml_html.tostring(root, encoding="unicode")
+
+
 def extract_body(
     entry: FeedEntry,
     fetch_full: bool = True,
@@ -49,6 +86,7 @@ def extract_body(
     deduplicate: bool = False,
     fast_extraction: bool = False,
     prune_xpath: list[str] | None = None,
+    merge_xpath: list[str] | None = None,
 ) -> ExtractedBody:
     if fetch_full and entry.link:
         log.info("trafilatura: fetching %s", entry.link)
@@ -57,8 +95,9 @@ def extract_body(
             if not downloaded:
                 log.warning("trafilatura: empty download for %s, falling back to RSS content", entry.link)
             else:
+                extract_input = _merge_split_containers(downloaded, merge_xpath) if merge_xpath else downloaded
                 extracted = trafilatura.extract(
-                    downloaded,
+                    extract_input,
                     favor_recall=favor_recall,
                     favor_precision=favor_precision,
                     include_comments=include_comments,
@@ -106,6 +145,7 @@ def compose_speech(
     deduplicate: bool = False,
     fast_extraction: bool = False,
     prune_xpath: list[str] | None = None,
+    merge_xpath: list[str] | None = None,
 ) -> tuple[str, ExtractedBody]:
     body = extract_body(
         entry,
@@ -117,6 +157,7 @@ def compose_speech(
         deduplicate=deduplicate,
         fast_extraction=fast_extraction,
         prune_xpath=prune_xpath,
+        merge_xpath=merge_xpath,
     )
     if body.clean:
         return f"{entry.title}.\n\n{body.clean}", body

@@ -36,7 +36,7 @@ uv run rss2podcast --feed-url https://www.eff.org/rss/updates.xml --feed-name "E
 
 **Ars Technica:**
 ```bash
-uv run rss2podcast --feed-url https://feeds.arstechnica.com/arstechnica/index --feed-name "Ars Technica" --output-dir podcasts --url-root https://podcasts.example.com --tts-endpoint http://localhost:8080/ --voice en_US-amy-medium --description "Ars Technica articles, narrated by Piper TTS" --author "Ars Technica" --limit 5 --prune-xpath '//div[contains(@class,"author-bio")]'
+uv run rss2podcast --feed-url https://feeds.arstechnica.com/arstechnica/index --feed-name "Ars Technica" --output-dir podcasts --url-root https://podcasts.example.com --tts-endpoint http://localhost:8080/ --voice en_US-amy-medium --description "Ars Technica articles, narrated by Piper TTS" --author "Ars Technica" --limit 1 --prune-xpath '//div[contains(@class,"author-bio")]' --merge-xpath '//div[contains(@class,"post-content")]'
 ```
 
 **Hackaday:**
@@ -119,6 +119,7 @@ These control how `trafilatura` extracts article text from fetched pages. Defaul
 | `--deduplicate` | off | Remove duplicate text blocks (useful for feeds that repeat headlines or teasers) |
 | `--fast-extraction` | off | Skip fallback extractors; faster but may miss content on harder pages |
 | `--prune-xpath XPATH` | — | XPath expression to remove from the DOM before extraction; repeatable. Use this to surgically excise author bios, related-article widgets, cookie banners, etc. |
+| `--merge-xpath XPATH` | — | XPath matching split article containers; children of all matches are concatenated into the first match before extraction. Repeatable. Use this when a site breaks the article body across sibling containers around mid-article ads (e.g. Ars Technica's split `post-content` divs), which otherwise causes trafilatura to truncate at the first ad break. |
 
 **`--prune-xpath` examples:**
 
@@ -128,6 +129,14 @@ These control how `trafilatura` extracts article text from fetched pages. Defaul
 
 # Remove multiple sections
 --prune-xpath '//aside' --prune-xpath '//div[@id="related"]'
+```
+
+**`--merge-xpath` example:**
+
+```bash
+# Ars Technica splits the article body across multiple <div class="post-content">
+# siblings separated by ad wrappers; merging them avoids mid-article truncation.
+--merge-xpath '//div[contains(@class,"post-content")]'
 ```
 
 ## YAML config reference
@@ -172,6 +181,8 @@ feeds:
     prune_xpath:               # default: null
       - '//div[contains(@class,"author-bio")]'
       - '//section[@id="related"]'
+    merge_xpath:               # default: null
+      - '//div[contains(@class,"post-content")]'
 ```
 
 `favor_recall` and `favor_precision` are independent trafilatura flags. Setting both to `true` is valid; trafilatura will apply both biases simultaneously.

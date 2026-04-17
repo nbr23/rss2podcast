@@ -23,6 +23,7 @@ class FeedConfig:
     deduplicate: bool = False
     fast_extraction: bool = False
     prune_xpath: list[str] | None = None
+    merge_xpath: list[str] | None = None
     limit: int | None = None
 
 
@@ -116,6 +117,13 @@ def _build_parser() -> argparse.ArgumentParser:
         dest="prune_xpath",
         help="XPath expression to prune before extraction (repeatable); e.g. '//div[@class=\"author-bio\"]'",
     )
+    ext.add_argument(
+        "--merge-xpath",
+        action="append",
+        metavar="XPATH",
+        dest="merge_xpath",
+        help="XPath for split content containers; children of all matches are concatenated into the first before extraction (repeatable). Useful for sites that break the article body across sibling divs around mid-article ads.",
+    )
     return p
 
 
@@ -143,6 +151,7 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
         deduplicate=args.deduplicate,
         fast_extraction=args.fast_extraction,
         prune_xpath=args.prune_xpath,
+        merge_xpath=args.merge_xpath,
     )
     return AppConfig(
         output_dir=args.output_dir,
@@ -173,6 +182,7 @@ def _from_yaml(path: Path) -> AppConfig:
             deduplicate=f.get("deduplicate", False),
             fast_extraction=f.get("fast_extraction", False),
             prune_xpath=f.get("prune_xpath"),
+            merge_xpath=f.get("merge_xpath"),
             limit=f.get("limit"),
         )
         for f in data.get("feeds", [])
