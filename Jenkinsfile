@@ -7,11 +7,6 @@ pipeline {
 	}
 
 	stages {
-		stage('Checkout'){
-			steps {
-				checkout scm
-			}
-		}
 		stage('Sync github repo') {
 				when { branch 'master' }
 				steps {
