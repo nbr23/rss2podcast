@@ -9,12 +9,8 @@ pipeline {
 	stages {
 		stage('Test') {
 			steps {
-				script {
-					def testImage = docker.build("rss2podcast-test:${env.BUILD_ID}", "--target test -f Dockerfile .")
-					testImage.inside {
-						sh 'uv run --group test pytest'
-					}
-				}
+				sh "docker build --target test -t rss2podcast-test:${env.BUILD_ID} ."
+				sh "docker run --rm rss2podcast-test:${env.BUILD_ID} uv run --group test pytest"
 			}
 			post {
 				always {
