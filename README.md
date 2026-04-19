@@ -105,6 +105,7 @@ Designed to run as a cron / scheduled job. Re-runs are idempotent — entries al
 | `--save-text` | off | Persist raw/clean text in `state.json` (useful for debugging) |
 | `--no-fetch` | off | Skip external crawling; use only RSS `content`/`description` |
 | `--no-style-rss-feed` | style on | Disable XSLT styling; skip `style.xsl` and omit the processing instruction from `feed.xml` |
+| `--no-github-ribbon` | ribbon on | Hide the "Fork me on GitHub" ribbon in the styled feed page |
 
 ### Extraction tuning
 
@@ -151,6 +152,7 @@ limit: 5                             # optional: process only N newest per feed
 save_text: false                     # optional: persist text in state.json
 no_fetch: false                      # optional: skip external crawling globally
 style_rss_feed: true                 # default: true; set to false to disable XSLT browser rendering
+show_github_ribbon: true             # default: true; set to false to hide the "Fork me on GitHub" ribbon
 ```
 
 Per-feed keys:

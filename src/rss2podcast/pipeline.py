@@ -11,7 +11,7 @@ from .extract import compose_speech, html_to_text
 from .feed import fetch
 from .publish import write_feed
 from .state import State
-from .templates.style import FEED_STYLE_TMPL
+from .templates.style import render_feed_style
 from .tts import TTSClient
 
 log = logging.getLogger(__name__)
@@ -129,7 +129,7 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
 def run(app: AppConfig) -> None:
     app.output_dir.mkdir(parents=True, exist_ok=True)
     if app.style_rss_feed:
-        (app.output_dir / "style.xsl").write_text(FEED_STYLE_TMPL)
+        (app.output_dir / "style.xsl").write_text(render_feed_style(app.show_github_ribbon))
     for feed_cfg in app.feeds:
         try:
             process_feed(app, feed_cfg)

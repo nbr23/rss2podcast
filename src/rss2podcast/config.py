@@ -37,6 +37,7 @@ class AppConfig:
     save_text: bool = False
     no_fetch: bool = False
     style_rss_feed: bool = True
+    show_github_ribbon: bool = True
 
 
 _SLUG_RE = re.compile(r"[^a-z0-9]+")
@@ -75,6 +76,13 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_false",
         default=True,
         help="Disable XSLT styling; skip writing style.xsl and omit the processing instruction from feed.xml",
+    )
+    p.add_argument(
+        "--no-github-ribbon",
+        dest="show_github_ribbon",
+        action="store_false",
+        default=True,
+        help="Hide the 'Fork me on GitHub' ribbon in the styled feed page",
     )
 
     ext = p.add_argument_group("extraction tuning")
@@ -162,6 +170,7 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
         save_text=args.save_text,
         no_fetch=args.no_fetch,
         style_rss_feed=args.style_rss_feed,
+        show_github_ribbon=args.show_github_ribbon,
     )
 
 
@@ -196,4 +205,5 @@ def _from_yaml(path: Path) -> AppConfig:
         save_text=data.get("save_text", False),
         no_fetch=data.get("no_fetch", False),
         style_rss_feed=data.get("style_rss_feed", True),
+        show_github_ribbon=data.get("show_github_ribbon", True),
     )

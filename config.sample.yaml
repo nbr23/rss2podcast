@@ -1,6 +1,7 @@
 output_dir: podcasts
 url_root: https://podcasts.example.com
 tts_endpoint: http://localhost:8080
+# show_github_ribbon: false  # hide the "Fork me on GitHub" ribbon (default: true)
 
 feeds:
   - name: EFF Updates

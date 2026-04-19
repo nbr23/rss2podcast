@@ -1,4 +1,44 @@
-FEED_STYLE_TMPL = """<?xml version="1.0"?>
+_GITHUB_RIBBON_CSS = """
+.github-ribbon {
+    position: fixed;
+    top: 40px;
+    right: -65px;
+    width: 230px;
+    padding: 8px 0;
+    background: #151513;
+    color: #fff;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: none;
+    transform: rotate(45deg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    border-top: 1px dashed rgba(255, 255, 255, 0.4);
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.4);
+    z-index: 999;
+}
+
+.github-ribbon:hover {
+    background: #333;
+}
+"""
+
+_GITHUB_RIBBON_HTML = """        <a class="github-ribbon" href="https://github.com/nbr23/rss2podcast" target="_blank" rel="noopener noreferrer">
+          Fork me on GitHub
+        </a>
+"""
+
+
+def render_feed_style(show_github_ribbon: bool = True) -> str:
+    ribbon_css = _GITHUB_RIBBON_CSS if show_github_ribbon else ""
+    ribbon_html = _GITHUB_RIBBON_HTML if show_github_ribbon else ""
+    return _FEED_STYLE_TMPL.replace("{{GITHUB_RIBBON_CSS}}", ribbon_css).replace(
+        "{{GITHUB_RIBBON_HTML}}", ribbon_html
+    )
+
+
+_FEED_STYLE_TMPL = """<?xml version="1.0"?>
 <xsl:stylesheet
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
@@ -128,10 +168,12 @@ body {
     width: 100%;
     height: auto;
 }
+
+{{GITHUB_RIBBON_CSS}}
         </style>
       </head>
       <body>
-        <a class="podcast-banner" href="#" onclick="this.href='pcast://'+location.host+location.pathname+location.search;">
+{{GITHUB_RIBBON_HTML}}        <a class="podcast-banner" href="#" onclick="this.href='pcast://'+location.host+location.pathname+location.search;">
             This page is a Podcast Feed, click to add it to your podcast player!
         </a>
         <div class="content">
