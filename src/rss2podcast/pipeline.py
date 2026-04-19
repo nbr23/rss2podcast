@@ -32,9 +32,15 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
     state = State.load(feed_dir / "state.json", feed_cfg.url)
 
     log.info("[%s] fetching %s", feed_cfg.name, feed_cfg.url)
-    entries, feed_image = fetch(feed_cfg.url)
+    entries, feed_image, channel_link = fetch(feed_cfg.url)
+    dirty = False
     if feed_image and not state.feed_image_url:
         state.feed_image_url = feed_image
+        dirty = True
+    if channel_link and not state.feed_channel_link:
+        state.feed_channel_link = channel_link
+        dirty = True
+    if dirty:
         state.save()
     limit = feed_cfg.limit if feed_cfg.limit is not None else app.limit
     if limit is not None:

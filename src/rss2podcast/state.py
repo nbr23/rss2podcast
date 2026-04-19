@@ -14,6 +14,7 @@ class State:
     path: Path
     entries: dict[str, dict[str, Any]] = field(default_factory=dict)
     feed_image_url: str | None = None
+    feed_channel_link: str | None = None
 
     @classmethod
     def load(cls, path: Path, feed_url: str) -> "State":
@@ -24,6 +25,7 @@ class State:
                 path=path,
                 entries=data.get("entries", {}),
                 feed_image_url=data.get("feed_image_url"),
+                feed_channel_link=data.get("feed_channel_link"),
             )
         return cls(feed_url=feed_url, path=path)
 
@@ -42,6 +44,8 @@ class State:
                 payload: dict[str, Any] = {"feed_url": self.feed_url, "entries": self.entries}
                 if self.feed_image_url:
                     payload["feed_image_url"] = self.feed_image_url
+                if self.feed_channel_link:
+                    payload["feed_channel_link"] = self.feed_channel_link
                 json.dump(payload, f, indent=2, sort_keys=True)
             os.chmod(tmp, 0o644)
             os.replace(tmp, self.path)

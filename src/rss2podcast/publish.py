@@ -46,8 +46,9 @@ def write_feed(
     fg.id(channel_link)
     fg.title(feed_cfg.name)
     fg.link(href=channel_link, rel="self")
-    if feed_cfg.url:
-        fg.link(href=feed_cfg.url, rel="alternate")
+    alternate = state.feed_channel_link or feed_cfg.url
+    if alternate:
+        fg.link(href=alternate, rel="alternate")
     fg.description(feed_cfg.description or f"TTS podcast generated from {feed_cfg.url}")
     lang = feed_cfg.voice.split("_")[0] if "_" in feed_cfg.voice else "en"
     fg.language(lang)

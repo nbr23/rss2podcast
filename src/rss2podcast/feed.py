@@ -59,7 +59,7 @@ def _feed_image_url(feed: dict) -> str | None:
     return None
 
 
-def fetch(url: str) -> tuple[list[FeedEntry], str | None]:
+def fetch(url: str) -> tuple[list[FeedEntry], str | None, str | None]:
     parsed = feedparser.parse(url)
     out: list[FeedEntry] = []
     for e in parsed.entries:
@@ -74,4 +74,4 @@ def fetch(url: str) -> tuple[list[FeedEntry], str | None]:
                 image_url=_entry_image_url(e),
             )
         )
-    return out, _feed_image_url(parsed.feed)
+    return out, _feed_image_url(parsed.feed), parsed.feed.get("link") or None
