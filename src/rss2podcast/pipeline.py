@@ -73,7 +73,11 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
             continue
 
         date_prefix = entry.pub_date.strftime("%Y-%m-%d")
-        mp3_filename = f"{date_prefix}-{entry.guid[:12]}.mp3"
+        title_slug = slugify(entry.title)[:60].strip("-")
+        guid_short = entry.guid[:8]
+        mp3_filename = (
+            f"{date_prefix}-{title_slug}-{guid_short}.mp3" if title_slug else f"{date_prefix}-{guid_short}.mp3"
+        )
         mp3_path = feed_dir / mp3_filename
 
         try:

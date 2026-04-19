@@ -60,7 +60,7 @@ See `config.sample.yaml` for a fully annotated example.
   {feed-slug}/
     state.json
     feed.xml
-    2026-04-16-abc123def456.mp3
+    2026-04-16-some-post-title-abc12345.mp3
     ...
 ```
 
