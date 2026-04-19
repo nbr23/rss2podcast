@@ -8,7 +8,7 @@ FEED_STYLE_TMPL = """<?xml version="1.0"?>
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
       <head>
         <title>
-          rss2podcast | <xsl:value-of select="/rss/channel/title"/>
+          <xsl:value-of select="/rss/channel/title"/> | rss2podcast
         </title>
         <style>
 .podcast-banner {
