@@ -49,4 +49,4 @@ def test_yaml_config(tmp_path):
     cfg = parse_args(["--config", str(yml)])
     assert len(cfg.feeds) == 2
     assert cfg.feeds[0].voice == "v1"
-    assert cfg.feeds[1].voice == "en_US-amy-low"
+    assert cfg.feeds[1].voice == "en_US-amy-medium"

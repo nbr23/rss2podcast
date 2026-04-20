@@ -24,7 +24,7 @@ feeds:
 
   - name: Hackaday
     url: https://hackaday.com/blog/feed/
-    voice: en_US-amy-low
+    voice: en_US-amy-medium
     description: Hackaday articles, narrated by Piper TTS
     author: Hackaday
     # Remove author bio and tag/category sidebars before extraction

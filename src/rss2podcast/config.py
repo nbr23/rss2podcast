@@ -12,7 +12,7 @@ import yaml
 class FeedConfig:
     name: str
     url: str
-    voice: str = "en_US-amy-low"
+    voice: str = "en_US-amy-medium"
     description: str | None = None
     author: str | None = None
     image_url: str | None = None
@@ -55,7 +55,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--output-dir", type=Path)
     p.add_argument("--url-root", help="Public base URL where output_dir is served")
     p.add_argument("--tts-endpoint", default="http://localhost:8080")
-    p.add_argument("--voice", default="en_US-amy-low")
+    p.add_argument("--voice", default="en_US-amy-medium")
     p.add_argument("--description")
     p.add_argument("--author")
     p.add_argument("--image-url")
@@ -180,7 +180,7 @@ def _from_yaml(path: Path) -> AppConfig:
         FeedConfig(
             name=f["name"],
             url=f["url"],
-            voice=f.get("voice", "en_US-amy-low"),
+            voice=f.get("voice", "en_US-amy-medium"),
             description=f.get("description"),
             author=f.get("author"),
             image_url=f.get("image_url"),

@@ -41,7 +41,7 @@ uv run rss2podcast --feed-url https://feeds.arstechnica.com/arstechnica/index --
 
 **Hackaday:**
 ```bash
-uv run rss2podcast --feed-url https://hackaday.com/blog/feed/ --feed-name Hackaday --output-dir podcasts --url-root https://podcasts.example.com --tts-endpoint http://localhost:8080/ --voice en_US-amy-low --description "Hackaday articles, narrated by Piper TTS" --author Hackaday --prune-xpath '//div[contains(@class,"author-bio")]' --prune-xpath '//section[contains(@class,"related")]'
+uv run rss2podcast --feed-url https://hackaday.com/blog/feed/ --feed-name Hackaday --output-dir podcasts --url-root https://podcasts.example.com --tts-endpoint http://localhost:8080/ --voice en_US-amy-medium --description "Hackaday articles, narrated by Piper TTS" --author Hackaday --prune-xpath '//div[contains(@class,"author-bio")]' --prune-xpath '//section[contains(@class,"related")]'
 ```
 
 ### Multi-feed (YAML)
@@ -87,7 +87,7 @@ Designed to run as a cron / scheduled job. Re-runs are idempotent — entries al
 | Flag | Default | Description |
 |---|---|---|
 | `--tts-endpoint URL` | `http://localhost:8080` | gopipertts base URL |
-| `--voice MODEL` | `en_US-amy-low` | Piper voice model name |
+| `--voice MODEL` | `en_US-amy-medium` | Piper voice model name |
 
 ### Feed metadata
 
@@ -163,7 +163,7 @@ feeds:
     url: https://...     # required
 
     # TTS
-    voice: en_US-amy-medium   # default: en_US-amy-low
+    voice: en_US-amy-medium   # default: en_US-amy-medium
 
     # Feed metadata
     description: "..."
