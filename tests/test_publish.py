@@ -29,3 +29,4 @@ def test_writes_valid_rss(tmp_path):
     assert 'length="12345"' in xml
     assert "audio/mpeg" in xml
     assert "0:02:05" in xml
+    assert "https://src.example/articles/1" in xml
