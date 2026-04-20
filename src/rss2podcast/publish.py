@@ -77,7 +77,8 @@ def write_feed(
         desc = rec.get("description", "")
         link = rec.get("link")
         if link:
-            desc = f"{desc}\n\n{link}" if desc else link
+            anchor = f'<a href="{link}">{link}</a>'
+            desc = f"{desc}<br/><br/>{anchor}" if desc else anchor
         if desc:
             fe.description(desc)
         pub = rec.get("pub_date")
