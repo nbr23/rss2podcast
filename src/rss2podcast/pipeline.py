@@ -53,14 +53,13 @@ def process_feed(app: AppConfig, feed_cfg: FeedConfig) -> None:
             state_dirty = True
     if state_dirty:
         state.save()
-    log.info("[%s] %d entries in feed, %d already in state", feed_cfg.name, len(entries), len(state.entries))
+    new_entries = [(i, e) for i, e in enumerate(entries) if not state.has(e.guid)]
+    log.info("[%s] %d entries in feed, %d new to fetch", feed_cfg.name, len(entries), len(new_entries))
 
     tts = TTSClient(app.tts_endpoint, feed_cfg.voice)
 
     new_count = 0
-    for idx, entry in enumerate(entries):
-        if state.has(entry.guid):
-            continue
+    for idx, entry in new_entries:
         log.info("[%s] processing: %s", feed_cfg.name, entry.title)
         text, body = compose_speech(
             entry,
